@@ -1,0 +1,42 @@
+name: Create a new release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Push
+    steps:
+      - name: Get tag
+        uses: olegtarasov/get-tag@v2.1
+        id: tagName
+        with:
+          tagRegex: "v(.*)"
+
+      - name: git-checkout
+        uses: actions/checkout@v2
+
+      - name: Install all dependencies && Generate zip
+        run: npm run pack
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.tagName.outputs.tag }}
+
+      - name: Include packaged function in release
+        id: upload-release-asset-latest
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./out.zip
+          asset_name: ./azure-serverless-discord-bot.zip
+          asset_content_type: application/zip

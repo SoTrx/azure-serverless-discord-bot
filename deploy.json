@@ -1,0 +1,159 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "defaultValue": "srvlbot",
+      "type": "string",
+      "metadata": {
+        "description": "Name use as base-template to named the resources to be deployed in Azure."
+      }
+    },
+    "applicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "Discord App ID. Go to discord applications page"
+      }
+    },
+    "applicationPublicKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Discord App Public Key. Go to discord applications page"
+      }
+    },
+    "applicationToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Discord bot Token. Go to discord applications page"
+      }
+    },
+    "guildId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional Guild ID to deploy the commands into. Default will deploy in every guild the bot has joined, but this can take up to an hour"
+      }
+    }
+  },
+  "variables": {
+    "suffix": "[substring(toLower(uniqueString(resourceGroup().id, resourceGroup().location)),0,5)]",
+    "funcAppName": "[toLower(concat(parameters('baseName'), variables('suffix')))]",
+    "funcStorageAccountName": "[tolower(concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),16)), variables('suffix'), 'stg'))]",
+    "funcHhostingPlanName": "[concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),14)), variables('suffix'), 'plan')]",
+    "insightsAppName": "[concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),14)), variables('suffix'), '-meta')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-11-01",
+      "name": "[variables('funcAppName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp,linux",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('microsoft.insights/components/', variables('insightsAppName'))]",
+        "[concat('Microsoft.Web/serverfarms/', variables('funcHhostingPlanName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/',variables('funcStorageAccountName'))]"
+      ],
+      "properties": {
+        "name": "[variables('funcAppName')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~3"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "node"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "10.14.1"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(concat('microsoft.insights/components/', variables('insightsAppName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[reference(concat('microsoft.insights/components/', variables('insightsAppName')), '2015-05-01').ConnectionString]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('funcStorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('funcStorageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
+            },
+            {
+              "name": "BOT_APP_ID",
+              "value": "[parameters('applicationId')]"
+            },
+            {
+              "name": "BOT_APP_PUBLIC_KEY",
+              "value": "[parameters('applicationPublicKey')]"
+            },
+            {
+              "name": "BOT_APP_TOKEN",
+              "value": "[parameters('applicationToken')]"
+            },
+            {
+              "name": "COMMANDS_GUILD_ID",
+              "value": "[parameters('guildId')]"
+            },
+            {
+              "name": "WEBSITE_RUN_FROM_ZIP",
+              "value": "https://github.com/SoTrx/azure-serverless-discord-bot/releases/latest/download/default.azure-serverless-discord-bot.zip"
+            }
+          ],
+          "use32BitWorkerProcess": false,
+          "linuxFxVersion": "Node|14"
+        },
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', variables('funcHhostingPlanName'))]",
+        "hostingEnvironment": "",
+        "clientAffinityEnabled": true
+      },
+      "resources": []
+    },
+    {
+      "apiVersion": "2019-08-01",
+      "name": "[variables('funcHhostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "kind": "app,linux",
+      "properties": {
+        "name": "[variables('funcHhostingPlanName')]",
+        "computeMode": "Dynamic",
+        "reserved": true
+      },
+      "sku": {
+        "Tier": "Dynamic",
+        "Name": "Y1"
+      }
+    },
+    {
+      "apiVersion": "2015-05-01",
+      "name": "[variables('insightsAppName')]",
+      "type": "microsoft.insights/components",
+      "location": "[resourceGroup().location]",
+      "kind": "",
+      "properties": {
+        "Application_Type": "web",
+        "ApplicationId": "[variables('funcAppName')]",
+        "Request_Source": "rest"
+      }
+    },
+    {
+      "apiVersion": "2019-06-01",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('funcStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "supportsHttpsTrafficOnly": true,
+        "minimumTlsVersion": "TLS1_2"
+      }
+    }
+  ],
+  "outputs": {}
+}

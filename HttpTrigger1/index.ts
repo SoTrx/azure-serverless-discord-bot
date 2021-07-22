@@ -1,6 +1,6 @@
 import { join } from "path";
 import { env } from "process";
-import { AzureFunctionServer, SlashCreator } from "@sotrx/slash-create";
+import { AzureFunctionServer, SlashCreator } from "slash-create";
 
 (async () => {
   const creator = new SlashCreator({

@@ -83,18 +83,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@sotrx/slash-create@^3.3.2":
-  version "3.3.2"
-  resolved "https://npm.pkg.github.com/download/@sotrx/slash-create/3.3.2/b2555f3fde61d0bb0e2b4bcf30f7ea151d84da20d2f636e0443dad24ed6f4b52#a9ef6e364c46a124a9a2dcf271673b1fa76e2d3a"
-  integrity sha512-52ZIiwjYqAW5jnkJLhV1D4blWnR86t+cfeR1Kr3TGwZ0H0vJBqFd+ed9t2apHIWiiOuLgcAtWFIVs+XjN0fx4w==
-  dependencies:
-    "@discordjs/collection" "^0.2.0"
-    eventemitter3 "^4.0.7"
-    lodash.isequal "^4.5.0"
-    lodash.uniq "^4.5.0"
-    require-all "^3.0.0"
-    tweetnacl "^1.0.3"
-
 "@types/json-schema@^7.0.7":
   version "7.0.8"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.8.tgz#edf1bf1dbf4e04413ca8e5b17b3b7d7d54b59818"
@@ -901,6 +889,17 @@ shebang-regex@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
+
+"slash-create@https://github.com/Snazzah/slash-create":
+  version "3.3.0"
+  resolved "https://github.com/Snazzah/slash-create#10ba62de712de156ceb7f5622620b63cc89a50e5"
+  dependencies:
+    "@discordjs/collection" "^0.2.0"
+    eventemitter3 "^4.0.7"
+    lodash.isequal "^4.5.0"
+    lodash.uniq "^4.5.0"
+    require-all "^3.0.0"
+    tweetnacl "^1.0.3"
 
 slash@^3.0.0:
   version "3.0.0"

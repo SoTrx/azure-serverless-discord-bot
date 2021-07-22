@@ -5,7 +5,7 @@ import {
   SlashCreator,
   CommandContext,
   ComponentContext,
-} from "@sotrx/slash-create";
+} from "slash-create";
 import { env } from "process";
 
 export class ButtonCommand extends SlashCommand {

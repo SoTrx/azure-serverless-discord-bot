@@ -3,7 +3,7 @@ import {
   CommandOptionType,
   CommandContext,
   SlashCreator,
-} from "@sotrx/slash-create";
+} from "slash-create";
 import { env } from "process";
 
 export class HelloCommand extends SlashCommand {

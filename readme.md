@@ -42,9 +42,9 @@ To debug the bot locally, and to not deploy the bot every time a change is made 
 
 Either go the the [ngrok website](https://ngrok.com/download) or use a package manager to install ngrok.
 
-Once it's done, just execute `npm start` as always. This will give you a https://\*.ngrok.io URL that you can copy paste into the [Discord Developers Portal Applications Page](https://discord.com/developers/applications) "Interactions endpoint URL".
+Once it's done, just execute `npm start` to run the function, and then `npm run forward` to start forwarding your local port 7071 to the internet with ngrok. This will give you a https://\*.ngrok.io URL that you can copy paste into the [Discord Developers Portal Applications Page](https://discord.com/developers/applications) "Interactions endpoint URL".
 
-Beware that ngrok sessions expires after 2 hours.
+Beware that ngrok sessions expires after 2 hours, you'll need to restart the `npm run forward` command.
 
 ## Background
 
